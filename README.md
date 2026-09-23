@@ -206,14 +206,14 @@ For each ROI crop, the initial image limits are automatically calculated from th
 When **Create iscell_new** is clicked, the program first labels every ROI as `-1`. It then automatically labels an ROI as `0` if either of these conditions is true:
 
 1. `Fneu.min() > F.max()` for that ROI.
-2. The ROI contains fewer than 5 pixels.
+2. The ROI contains fewer than 20 pixels.
 
 These rules are implemented in `create_iscell_new()`:
 
 ```python
 neuropil_reject = np.min(self.Fneu, axis=1) > np.max(self.F, axis=1)
 small_roi_reject = np.fromiter(
-    (len(np.asarray(roi["ypix"])) < 5 for roi in self.stat),
+    (len(np.asarray(roi["ypix"])) < 20 for roi in self.stat),
     dtype=bool,
     count=len(self.stat),
 )

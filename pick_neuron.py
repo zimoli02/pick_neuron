@@ -48,6 +48,7 @@ DATA_ROOT = Path("/Volumes/kermit/Zimo/2_RawData")
 CROP_RADIUS = 20  # radius 20 -> a 41 x 41 pixel view
 MASK_ALPHA = 0.5
 MAX_TRACE_POINTS = 20_000  # display decimation only; saved data are untouched
+NPIX_MIN = 20
 
 LABEL_NAMES = {
     1: "Is cell",
@@ -310,7 +311,7 @@ class Suite2PDataset:
         labels = np.full(len(self.stat), -1, dtype=np.int8)
         neuropil_reject = np.min(self.Fneu, axis=1) > np.max(self.F, axis=1)
         small_roi_reject = np.fromiter(
-            (len(np.asarray(roi["ypix"])) < 5 for roi in self.stat),
+            (len(np.asarray(roi["ypix"])) < NPIX_MIN for roi in self.stat),
             dtype=bool,
             count=len(self.stat),
         )
@@ -788,7 +789,7 @@ class CellValidatorApp(tk.Tk):
             "Created iscell_new.npy. Automatically labeled "
             f"{summary['total']} ROIs as not cell "
             f"(Fneu threshold: {summary['neuropil']}; "
-            f"<5 pixels: {summary['small_roi']}; overlap counted once)."
+            f"<{NPIX_MIN} pixels: {summary['small_roi']}; overlap counted once)."
         )
 
     def _load_iscell_new(self) -> None:
